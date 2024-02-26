@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF Excelify</title>
+  <link rel="stylesheet" href="static/myStylesheet.css">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+  </script>
+
+</head>
+<body style="background-color: rgb(255, 255, 255)" style="font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif">
+  
+  <div class="container shadow-lg p-3 mt-5 mb-5 bg-body-tertiary rounded">
+    <div class="container">
+      <h1 class="display-4 text-center">PDF Excelify</h1>
+    </div>
+    <hr>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages%}
+          <div class="alert alert-success  alert-dismissible fade show" role="alert">
+            <span> {{ message }} </span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <div id="convertContent">
+      <form action="/" method="POST" enctype="multipart/form-data">
+        <!-- Upload Input -->
+        <div class="container mt-5">
+          <div class="row">
+            <div class="col text-center">
+              <div class="mb-3">
+                <label for="PdfFile" class="form-label">Upload PDF</label>
+                <input class="form-control mx-auto p-2" style="width: 500px" type="file" id="PdfFile"name="PdfFile"/>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Convert Btn -->
+          <div class="row mt-5 mx-auto p-2" style="width: 200px">
+            <button id="submit" name="submit" class="btn btn-dark" id="convertBtn"> Convert </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Download Btn -->
+    {% if generated_excel %}
+      <div class="row mt-5 mx-auto p-2 mb-5" style="width: 200px">
+        <a href="{{ url_for('download_excel_file', filename=generated_excel) }}" id="downloadLink"><button class="button-85" role="button">Download</button></a>
+      </div>
+    {% endif %}
+
+    <!-- Tables, Checkboxes -->
+    <form method="POST" action="{{ url_for('index') }}">
+
+      <input class="form-check-input" type="checkbox" id="tableCheckboxAll" style="display: none" onclick="checkUnchecked(this)">
+      <label class="form-check-label" for="tableCheckboxAll" id="tableCheckboxAllLabel" style="display: none">Select All Tables</label>
+
+      {% for sheet_name, html_table in html_tables.items() %}
+        {% if sheet_name not in tables_to_exclude %}
+          <h2>{{ sheet_name }}</h2>
+          <div class="form-check">
+            <input class="form-check-input tableCheckboxes" type="checkbox" name="selected_sheets[]" value="{{ sheet_name }}" id="tableCheckboxes">
+            <label class="form-check-label" for="tableCheckboxes">Select Table</label>
+          </div>
+          {{ html_table|safe }}
+          <hr>
+        {% endif %}
+      {% endfor %}<br>
+
+      <!-- Generate Excel Btn -->
+      <div class="row mt-5 mx-auto p-2" style="width: 200px">
+        <button type="submit" class="btn btn-dark" id="generateExcelBtn" style="display: none">Generate Excel</button>
+      </div>
+    </form>
+  
+    <!-- Loading Animation -->
+    <div class="loader-wrapper" id="loader-wrapper" style="display: none">
+      <div class="loader"></div>
+      <div class="loader-text">
+        Converting...
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+</body>
+</html>
