@@ -43,7 +43,7 @@ def index():
                 return redirect(request.url)    
             
             excel_data = pd.ExcelFile(excel_file_path)
-            substrings_to_remove = ['Page ', ':\\Program Files', 'Printed', 'BIOVAC', 'BOSCHFLC'] # Remove and replace with table name(s) to exclude specific tables from table generation.
+            substrings_to_remove = ['Page ', ':\\Program Files', 'Printed'] # Remove and replace with table name(s) to exclude specific tables from table generation.
             
             # Looping through all sheets to create html tables
             for sheet_name in excel_data.sheet_names:
