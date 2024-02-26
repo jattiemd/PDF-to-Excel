@@ -31,7 +31,7 @@ def index():
             flash('Please upload a pdf file')
 
         # If PDF file was saved successfully
-        if os.path.exists(f'file_handler\\{session.get("PDF_FILE_NAME")}'):
+        if os.path.exists(f'{UPLOAD_FOLDER}{session.get("PDF_FILE_NAME")}'):
             excel_file_path = os.path.join(f'{UPLOAD_FOLDER}{session.get("EXCEL_FILE_NAME")}')
             
             # error handling: empty pdf file, no tables in pdf file
