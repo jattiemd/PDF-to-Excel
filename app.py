@@ -43,47 +43,59 @@ def index():
                 return redirect(request.url)    
             
             excel_data = pd.ExcelFile(excel_file_path)
-            substrings_to_remove = ['Page ', ':\\Program Files', 'Printed'] # Remove and replace with table name(s) to exclude specific tables from table generation.
+            substrings_to_remove = [] # Remove and replace with table name(s) to exclude specific tables from table generation.
             
             # Looping through all sheets to create html tables
             for sheet_name in excel_data.sheet_names:
-                sheet_data = excel_data.parse(sheet_name)
+                try:
+                    sheet_data = excel_data.parse(sheet_name, header=1)
+                except ValueError:
+                    sheet_data = excel_data.parse(sheet_name)
 
-                # Identifying unnamed columns
-                unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in col]
+                # Check if sheet_data is a DataFrame and not empty
+                if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
+                    # Handle the case where sheet_data.columns returns an integer
+                    if isinstance(sheet_data.columns, int):
+                        # print(f"* Warning: Sheet {sheet_name} has returned an integer for columns. Skipping...")
+                        continue
+                    
+                    # Identifying unnamed columns
+                    unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in str(col)]
 
-                # Replacing values in unnamed columns with an empty string
-                sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')
+                    # Replacing values in unnamed columns with an empty string
+                    sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')
 
-                # Resetting column names
-                sheet_data.columns = [col if 'Unnamed' not in col else '' for col in sheet_data.columns]
+                    # Resetting column names
+                    sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
 
-                # Converting DataFrame to HTML table with CSS styling for column width and removing NaN values
-                html_table = sheet_data.to_html(classes='table table-striped', index=False, na_rep='')
-                html_table = html_table.replace('<table>', '<table style="table-layout: auto; width: 100%;">')
-                html_table = html_table.replace('<th>', '<th style="text-align: left;">')
+                    # Converting DataFrame to HTML table with CSS styling for column width and removing NaN values
+                    html_table = sheet_data.to_html(classes='table table-striped', index=False, na_rep='')
+                    html_table = html_table.replace('<table>', '<table style="table-layout: auto; width: 100%;">')
+                    html_table = html_table.replace('<th>', '<th style="text-align: left;">')
 
-                soup = BeautifulSoup(html_table, 'html.parser')
+                    soup = BeautifulSoup(html_table, 'html.parser')
 
-                # Flag to indicate if the substring is found in the table
-                subtring_found = False
+                    # Flag to indicate if the substring is found in the table
+                    substring_found = False
 
-                # Remove tables based on whether the <th> tag contains any of the substrings
-                for th_tag in soup.find_all('th'):
-                    if th_tag.string:
-                        for substring_to_remove in substrings_to_remove:
-                            if substring_to_remove in th_tag.string:
-                                # Marking substring as found 
-                                subtring_found = True
-                                break
-                
-                # Stop processing current sheet if substring is found
-                if subtring_found:
-                    continue
+                    # Remove tables based on whether the <th> tag contains any of the substrings
+                    for th_tag in soup.find_all('th'):
+                        if th_tag.string:
+                            for substring_to_remove in substrings_to_remove:
+                                if substring_to_remove in th_tag.string:
+                                    # Marking substring as found
+                                    substring_found = True
+                                    break
 
-                # Converting the modified html content back to a string
-                modified_html_table = str(soup)
-                html_tables[sheet_name] = modified_html_table
+                    # Stop processing current sheet if substring is found
+                    if substring_found:
+                        continue
+
+                    # Converting the modified html content back to a string
+                    modified_html_table = str(soup)
+                    html_tables[sheet_name] = modified_html_table
+                else:
+                    print(f"* Warning: Sheet {sheet_name} is either empty or not a DataFrame. Skipping...")
 
             selected_sheets = request.form.getlist('selected_sheets[]')
 
@@ -100,11 +112,21 @@ def index():
                 # Writing selected sheets to excel file
                 with pd.ExcelWriter(os.path.join(f'{UPLOAD_FOLDER}{session.get("NEW_EXCEL_FILE_NAME")}'), engine='xlsxwriter') as new_excel_data:
                     for sheet_name in selected_sheets:
-                        sheet_data = excel_data.parse(sheet_name)                        
-                        unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in col]                       
-                        sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
-                        sheet_data.columns = [col if 'Unnamed' not in col else '' for col in sheet_data.columns]
-                        sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
+                        sheet_data = excel_data.parse(sheet_name, header=1)
+
+                        # Check if sheet_data is a DataFrame and not empty
+                        if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
+                            # Handle the case where sheet_data.columns returns an integer
+                            if isinstance(sheet_data.columns, int):
+                                # print(f"* Warning: Sheet {sheet_name} has returned an integer for columns. Skipping...")
+                                continue                 
+
+                            unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in str(col)]                       
+                            sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
+                            sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
+                            sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
+                        else:
+                            print(f"* Warning: Sheet {sheet_name} is either empty or not a DataFrame. Skipping...")
 
                 excel_data.close()
                 print(f'* {len(selected_sheets)} sheets successfully generated!')
