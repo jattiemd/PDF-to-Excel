@@ -47,16 +47,22 @@ document.addEventListener('DOMContentLoaded', function() {
   var tableCheckboxAll = document.getElementById('tableCheckboxAll');
   var tableCheckboxAllLabel = document.getElementById('tableCheckboxAllLabel');
   var generateExcelBtn = document.getElementById('generateExcelBtn');
+  var combineTablesCheckbox = document.getElementById('combineTables');
+  var combineTablesLabel = document.getElementById('combineTablesLabel');
+  var operationsLabel = document.getElementById("operationsLabel");
 
   // Check if there are visible Tablecheckbox checkboxes
   var anyVisible = Array.from(tableCheckboxes).some(function(checkbox) {
     return checkbox.offsetParent !== null;
   });
   
-  // Toggle the visibility of TablecheckboxAll based on whether any Tablecheckbox checkboxes are visible
+  // Toggle the visibility of elements based on whether any Tablecheckbox checkboxes are visible
   tableCheckboxAll.style.display = anyVisible ? 'inline-flex' : 'none';
   tableCheckboxAllLabel.style.display = anyVisible ? 'inline-flex' : 'none';
   generateExcelBtn.style.display = anyVisible ? 'initial' : 'none';
+  combineTablesCheckbox.style.display = anyVisible ? 'initial' : 'none';
+  combineTablesLabel.style.display = anyVisible ? 'initial' : 'none';
+  operationsLabel.style.display = anyVisible ? 'initial' : 'none';
 });
 
 

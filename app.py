@@ -13,6 +13,8 @@ lock = threading.Lock()
 @app.route('/', methods=['GET', 'POST'])
 def index():
     html_tables = {}
+    checkbox_value = False
+    global index_error
 
     if 'USER_IP' not in session:
         session['USER_IP'] = request.remote_addr
@@ -94,46 +96,78 @@ def index():
                     # Converting the modified html content back to a string
                     modified_html_table = str(soup)
                     html_tables[sheet_name] = modified_html_table
-                else:
-                    print(f"* Warning: Sheet {sheet_name} is either empty or not a DataFrame. Skipping...")
 
+            # Catching selected sheets and checking combine tables variable
             selected_sheets = request.form.getlist('selected_sheets[]')
+            index_error = False
 
             if selected_sheets:
+                if 'combineTables' in request.form:
+                    checkbox_value = True 
+
                 run_file_check_on(session.get('NEW_EXCEL_FILE_NAME', None))
                 session['NEW_EXCEL_FILE_NAME'] = 'custom_' + session.get('EXCEL_FILE_NAME')
                 session['UPLOADS'].append(session['NEW_EXCEL_FILE_NAME'])
 
-                flash(f'{len(selected_sheets)} tables selected')
-                flash('Click Download!')
+                # Only display download notification if there is no index error
+                if not index_error:
+                    flash(f'{len(selected_sheets)} tables selected')
+                    flash('Click Download!')
+
                 print('* Sheets selected')
                 print('* Generating...')
 
                 # Writing selected sheets to excel file
                 with pd.ExcelWriter(os.path.join(f'{UPLOAD_FOLDER}{session.get("NEW_EXCEL_FILE_NAME")}'), engine='xlsxwriter') as new_excel_data:
-                    for sheet_name in selected_sheets:
-                        sheet_data = excel_data.parse(sheet_name, header=1)
+                    if checkbox_value:
+                        print(f"* Combine tables: {checkbox_value}")
+                        combined_sheets = []
+                        for sheet_name in selected_sheets:
+                            sheet_data = excel_data.parse(sheet_name, header=1)
 
-                        # Check if sheet_data is a DataFrame and not empty
-                        if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
-                            # Handle the case where sheet_data.columns returns an integer
-                            if isinstance(sheet_data.columns, int):
-                                # print(f"* Warning: Sheet {sheet_name} has returned an integer for columns. Skipping...")
-                                continue                 
+                            # Check if sheet_data is a DataFrame and not empty
+                            if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
+                                # Handle the case where sheet_data.columns returns an integer
+                                if isinstance(sheet_data.columns, int):
+                                    continue                 
 
-                            unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in str(col)]                       
-                            sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
-                            sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
-                            sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
-                        else:
-                            print(f"* Warning: Sheet {sheet_name} is either empty or not a DataFrame. Skipping...")
+                                unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in str(col)]                       
+                                sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
+                                sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
+                                combined_sheets.append(sheet_data)
+                        
+                        print(f"* Index Error: {index_error}")
+                        try:
+                            combined_data = pd.concat(combined_sheets, ignore_index=True)
+                            combined_data.to_excel(new_excel_data, sheet_name='Combined_sheets', index=False)
+                        except pd.errors.InvalidIndexError as e:
+                            index_error = True
+                            print(f"* Index Error: {index_error}")
+                            flash("Error while combining tables! Please reselect tables to combine with same column headers.")
+                            redirect(request.url)
+                    else:
+                        # Writing individual sheets to Excel file without concatenation
+                        print(f"* Combine tables: {checkbox_value}")
+                        for sheet_name in selected_sheets:
+                            sheet_data = excel_data.parse(sheet_name, header=1)
+
+                            # Check if sheet_data is a DataFrame and not empty
+                            if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
+                                # Handle the case where sheet_data.columns returns an integer
+                                if isinstance(sheet_data.columns, int):
+                                    continue                 
+
+                                unnamed_columns = [col for col in sheet_data.columns if 'Unnamed' in str(col)]                       
+                                sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
+                                sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
+                                sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
 
                 excel_data.close()
                 print(f'* {len(selected_sheets)} sheets successfully generated!')
                 print('* Awaiting download request...')
                 generated_excel = os.path.join(UPLOAD_FOLDER, session.get("NEW_EXCEL_FILE_NAME"))
 
-                return render_template('index.html', html_tables=html_tables, generated_excel=generated_excel)
+                return render_template('index.html', html_tables=html_tables, generated_excel=generated_excel, checkbox_value=checkbox_value, index_error=index_error)
 
     return render_template('index.html', html_tables=html_tables)
 

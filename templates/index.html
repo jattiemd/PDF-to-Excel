@@ -27,7 +27,7 @@
   
   <div class="container shadow-lg p-3 mt-5 mb-5 bg-body-tertiary rounded">
     <div class="container">
-      <h1 class="display-4 text-center">PDF Excelify</h1>
+      <h1 class="display-2 text-center">PDF Excelify</h1>
     </div>
     <hr>
 
@@ -64,7 +64,7 @@
     </div>
 
     <!-- Download Btn -->
-    {% if generated_excel %}
+    {% if generated_excel and not index_error%}
       <div class="row mt-5 mx-auto p-2 mb-5" style="width: 200px">
         <a href="{{ url_for('download_excel_file', filename=generated_excel) }}" id="downloadLink"><button class="button-85" role="button">Download</button></a>
       </div>
@@ -73,12 +73,27 @@
     <!-- Tables, Checkboxes -->
     <form method="POST" action="{{ url_for('index') }}">
 
-      <input class="form-check-input" type="checkbox" id="tableCheckboxAll" style="display: none" onclick="checkUnchecked(this)">
-      <label class="form-check-label" for="tableCheckboxAll" id="tableCheckboxAllLabel" style="display: none">Select All Tables</label>
+      <hr>
+      <div class="container text-center my-3">
+        <div class="row mb-2">
+          <h1 class="display-4 text-center" id="operationsLabel" style="display: none">Operations</h1>
+        </div>
+        <div class="row align-items-center">
+          <div class="col">
+            <input class="form-check-input" type="checkbox" id="tableCheckboxAll" style="display: none" onclick="checkUnchecked(this)">
+            <label class="form-check-label" for="tableCheckboxAll" id="tableCheckboxAllLabel" style="display: none">Select All Tables</label>
+          </div>
+          <div class="col">
+            <input class="form-check-input " type="checkbox" id="combineTables" name="combineTables" style="display: none" {% if checkbox_value %} checked {% endif %}> 
+            <label class="form-check-label" for="combineTables" id="combineTablesLabel" style="display: none">Combine Tables</label>
+          </div>
+        </div>  
+      </div>
+      <hr>
 
       {% for sheet_name, html_table in html_tables.items() %}
         {% if sheet_name not in tables_to_exclude %}
-          <h2>{{ sheet_name }}</h2>
+          <h2 class="display-6">{{ sheet_name }}</h2>
           <div class="form-check">
             <input class="form-check-input tableCheckboxes" type="checkbox" name="selected_sheets[]" value="{{ sheet_name }}" id="tableCheckboxes">
             <label class="form-check-label" for="tableCheckboxes">Select Table</label>
