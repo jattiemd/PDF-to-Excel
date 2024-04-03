@@ -1,64 +1,50 @@
-# PDF to Excel Converter
+# PDF to Excel
 
-This Flask web application converts PDF files containing tables into Excel format. It allows users to upload PDF files, extract tables from them, and then generate Excel files based on selected tables. Users can download the resulting Excel files once the conversion is complete.
+PDF Excelify is a web application built with Flask that allows users to convert tables from PDF files into Excel format. Users can upload their PDF files, select specific tables they want to convert, and choose whether to combine multiple tables into a single Excel file. The converted Excel files can then be downloaded for further use.
 
 ## Features
 
-- **PDF to Excel Conversion**: Converts PDF files containing tables into Excel format.
-- **Selective Table Generation**: Allows users to select specific tables from the PDF for conversion to Excel.
-- **Downloadable Excel Files**: Users can download the converted Excel files.
-- **Error Handling**: Provides error messages for cases where the PDF file has no tables or if no file is uploaded.
+- **Upload PDF**: Users can upload their PDF files containing tables.
+- **Table Selection**: Users can select specific tables they want to convert into Excel format.
+- **Combine Tables**: Users can choose to combine multiple selected tables into a single Excel file.
+- **Conversion**: PDF tables are converted into Excel format with proper formatting.
+- **Download**: Converted Excel files can be downloaded for further use.
+- **Error Handling**: The application provides error handling for various scenarios, such as empty PDF files or unsupported table formats.
 
-## Requirements
+## Technologies Used
 
-- Python 3.x
-- Flask
-- pandas
-- tabula-py
-- BeautifulSoup
+- **Flask**: Python-based web framework used for backend development.
+- **Bootstrap**: Frontend framework for building responsive and visually appealing web pages.
+- **Pandas**: Python library for data manipulation and analysis, used for handling Excel files and data processing.
+- **Tabula**: Python library for extracting tables from PDF files.
+- **BeautifulSoup**: Python library for parsing HTML and XML documents, used for HTML table generation.
 
 ## Usage
 
-1. Clone this repository to your local machine.
-   
-   ```
-   git clone https://github.com/your_username/your_repository.git
-   ```
+1. **Upload PDF**: Select a PDF file containing tables and upload it using the provided form.
+2. **Select Tables**: Check the boxes next to the tables you want to convert into Excel format.
+3. **Combine Tables** (Optional): Check the "Combine Tables" box if you want to merge multiple selected tables into a single Excel file.
+4. **Generate Excel**: Click the "Generate Excel" button to initiate the conversion process.
+5. **Download**: Once the conversion is complete, the download button will appear. Click it to download the converted Excel file.
 
-2. Navigate to the project directory.
+## Installation
 
-   ```
-   cd your_repository
-   ```
+1. Clone the repository:
 
-3. Install the required dependencies.
+```
+git clone <repository_url>
+```
 
-   ```
-   pip install -r requirements.txt
-   ```
+2. Install dependencies:
 
-4. Run the Flask application.
+```
+pip install -r requirements.txt
+```
 
-   ```
-   python app.py
-   ```
+3. Run the Flask application:
 
-5. Open your web browser and go to `http://localhost:5000`.
+```
+python app.py
+```
 
-6. Upload a PDF file containing tables.
-
-7. Select the desired tables for conversion or choose all tables.
-
-8. Click on the "Generate Excel" button to initiate the conversion process.
-
-9. Once the conversion is complete, download the Excel file.
-
-## Folder Structure
-
-- `file_handler/`: Directory for storing uploaded files.
-- `templates/`: HTML templates for the web interface.
-
-## Acknowledgments
-
-- This project was inspired by the need for a simple PDF to Excel converter.
-- Special thanks to the Flask, pandas, tabula-py, and BeautifulSoup developers for their excellent libraries.
+4. Access the application in your web browser at `http://localhost:5000`.
