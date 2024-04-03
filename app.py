@@ -143,7 +143,7 @@ def index():
                         except pd.errors.InvalidIndexError as e:
                             index_error = True
                             print(f"* Index Error: {index_error}")
-                            flash("Error while combining tables! Please reselect tables to combine with same column headers.")
+                            flash("Error while combining tables! Please reselect tables to combine. Ensure tables have the same column headers.")
                             redirect(request.url)
                     else:
                         # Writing individual sheets to Excel file without concatenation
