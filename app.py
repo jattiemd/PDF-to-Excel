@@ -135,7 +135,7 @@ def index():
                                 sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
                                 sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
                                 combined_sheets.append(sheet_data)
-                        
+
                         print(f"* Index Error: {index_error}")
                         try:
                             combined_data = pd.concat(combined_sheets, ignore_index=True)
