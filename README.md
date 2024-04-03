@@ -1,6 +1,6 @@
 # PDF to Excel
 
-PDF Excelify is a web application built with Flask that allows users to convert tables from PDF files into Excel format. Users can upload their PDF files, select specific tables they want to convert, and choose whether to combine multiple tables into a single Excel file. The converted Excel files can then be downloaded for further use.
+This is a web application built with Flask that allows users to convert tables from PDF files into Excel format. Users can upload their PDF files, select specific tables they want to convert, and choose whether to combine multiple tables into a single Excel file. The converted Excel files can then be downloaded for further use.
 
 ## Features
 
