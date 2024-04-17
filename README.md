@@ -6,7 +6,7 @@ This is a web application built with Flask that allows users to convert tables f
 
 - **Upload PDF**: Users can upload their PDF files containing tables.
 - **Table Selection**: Users can select specific tables they want to convert into Excel format.
-- **Combine Tables**: Users can choose to combine multiple selected tables into a single Excel file.
+- **Combine Tables**: Users can choose to combine multiple selected tables into a single Excel file. NB: tables must have the same column structure
 - **Conversion**: PDF tables are converted into Excel format with proper formatting.
 - **Download**: Converted Excel files can be downloaded for further use.
 - **Error Handling**: The application provides error handling for various scenarios, such as empty PDF files or unsupported table formats.
