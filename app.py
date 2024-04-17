@@ -1,6 +1,6 @@
 from flask import Flask, flash, render_template, request, redirect, send_file, after_this_request, session
 from bs4 import BeautifulSoup
-import secrets, os, threading, tabula, pandas as pd
+import secrets, os, threading, tabula, zipfile, pandas as pd
 
 
 app = Flask(__name__)
@@ -174,6 +174,13 @@ def index():
 
 @app.route('/download_excel_file/<filename>', methods=['POST', 'GET'])
 def download_excel_file(filename):
+    excel_file_path = filename
+
+    # Creating password + password file 
+    password = secrets.token_hex()
+    password_file_path = os.path.join(UPLOAD_FOLDER, f"{session.get('USER_IP')}_password.txt")
+    with open(password_file_path, "w") as password_file:
+        password_file.write(password)
 
     @after_this_request
     def remove_data(response):
@@ -187,9 +194,16 @@ def download_excel_file(filename):
             session.clear()
 
         return response
-    
-    return send_file(filename, as_attachment=True)
 
+    # Creating and preparing zip
+    zip_file_path = os.path.join(UPLOAD_FOLDER, f"{session.get('USER_IP')}_files.zip")
+    with zipfile.ZipFile(zip_file_path, "w") as zipf:
+        zipf.write(excel_file_path)
+        zipf.write(password_file_path)
+        print("* Files Zipped Successfully")
+
+    zip_response = send_file(zip_file_path, as_attachment=True)
+    return zip_response
 
 def do_conversion(file):
     """
