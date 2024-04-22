@@ -187,7 +187,8 @@ def download_excel_file(filename):
     excel_file_path = filename
 
     # Creating password file 
-    password_file_path = os.path.join(UPLOAD_FOLDER, f"{session.get('USER_IP')}_password.txt")
+    session["PASSWORD_FILE"] = f"{session.get('USER_IP')}_password.txt"
+    password_file_path = os.path.join(UPLOAD_FOLDER, session.get("PASSWORD_FILE"))
     with open(password_file_path, "w") as password_file:
         password_file.write(password)
 
@@ -199,13 +200,14 @@ def download_excel_file(filename):
             print('* Locking file resources')
             print('* Download Successful!')
             # Scheduling the removal of files in seperate thread after a short delay to acquire the file resource
-            threading.Timer(1.0, remove_files, args=(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), f"{session.get('USER_IP')}_files.zip", f"{session.get('USER_IP')}_password.txt")).start()
+            threading.Timer(1.0, remove_files, args=(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), session.get("ZIP_FOLDER"), session.get("PASSWORD_FILE"))).start()
             session.clear()
 
         return response
 
     # Creating and preparing zip
-    zip_file_path = os.path.join(UPLOAD_FOLDER, f"{session.get('USER_IP')}_files.zip")
+    session["ZIP_FOLDER"] = f"{session.get('USER_IP')}_files.zip"
+    zip_file_path = os.path.join(UPLOAD_FOLDER, session.get("ZIP_FOLDER"))
     with zipfile.ZipFile(zip_file_path, "w") as zipf:
         zipf.write(excel_file_path)
         zipf.write(password_file_path)
