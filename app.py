@@ -1,5 +1,9 @@
 from flask import Flask, flash, render_template, request, redirect, send_file, after_this_request, session
 from bs4 import BeautifulSoup
+from win32com.client.gencache import EnsureDispatch
+from openpyxl import load_workbook
+from pathlib import PurePath
+import pythoncom
 import secrets, os, threading, tabula, zipfile, pandas as pd
 
 
@@ -7,6 +11,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex()
 UPLOAD_FOLDER = 'file_handler\\'
 lock = threading.Lock()
+password = secrets.token_hex()
 
 
 # Main page
@@ -107,6 +112,7 @@ def index():
 
                 run_file_check_on(session.get('NEW_EXCEL_FILE_NAME', None))
                 session['NEW_EXCEL_FILE_NAME'] = 'custom_' + session.get('EXCEL_FILE_NAME')
+                session['NEW_EXCEL_FILE_NAME'] = session['NEW_EXCEL_FILE_NAME'].replace(" ", "_") 
                 session['UPLOADS'].append(session['NEW_EXCEL_FILE_NAME'])
 
                 # Only display download notification if there is no index error
@@ -161,6 +167,10 @@ def index():
                                 sheet_data[unnamed_columns] = sheet_data[unnamed_columns].fillna('')                       
                                 sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
                                 sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
+                
+                dir_path = os.getcwd()
+                with lock:
+                    password_protect_excel(str(PurePath(dir_path, f"{UPLOAD_FOLDER}{session.get('NEW_EXCEL_FILE_NAME')}")), password)
 
                 excel_data.close()
                 print(f'* {len(selected_sheets)} sheets successfully generated!')
@@ -176,8 +186,7 @@ def index():
 def download_excel_file(filename):
     excel_file_path = filename
 
-    # Creating password + password file 
-    password = secrets.token_hex()
+    # Creating password file 
     password_file_path = os.path.join(UPLOAD_FOLDER, f"{session.get('USER_IP')}_password.txt")
     with open(password_file_path, "w") as password_file:
         password_file.write(password)
@@ -299,6 +308,19 @@ def run_file_check_on(file_name):
     if file_name is not None:
         os.remove(os.path.join(UPLOAD_FOLDER, file_name))
 
+
+def password_protect_excel(file_dir_path, password):
+    """Password protect file"""
+    pythoncom.CoInitialize()
+    xl_file = EnsureDispatch("Excel.Application")
+    wb = xl_file.Workbooks.Open(file_dir_path)
+    xl_file.DisplayAlerts = False
+    wb.Visible = False
+    wb.SaveAs(file_dir_path, Password=password)
+    wb.Close()
+    xl_file.Quit()
+    print("* File protected successfully")
+    pythoncom.CoUninitialize()
 
 if __name__ == '__main__':
     app.run(debug=True)
