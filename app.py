@@ -199,7 +199,7 @@ def download_excel_file(filename):
             print('* Locking file resources')
             print('* Download Successful!')
             # Scheduling the removal of files in seperate thread after a short delay to acquire the file resource
-            threading.Timer(1.0, remove_files, args=(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'))).start()
+            threading.Timer(1.0, remove_files, args=(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), f"{session.get('USER_IP')}_files.zip", f"{session.get('USER_IP')}_password.txt")).start()
             session.clear()
 
         return response
@@ -272,7 +272,7 @@ def do_conversion(file):
     redirect(request.url)
 
 
-def remove_files(pdf_file_name, excel_file_name, new_excel_file_name):
+def remove_files(pdf_file_name, excel_file_name, new_excel_file_name, zip_folder, password_file):
     """Deleting files from file handler dir. Only if files exist within the dir"""
 
     with lock: 
@@ -301,6 +301,22 @@ def remove_files(pdf_file_name, excel_file_name, new_excel_file_name):
             os.remove(os.path.join(UPLOAD_FOLDER, new_excel_file_name))
             print('* New Excel file found')
             print('* Removing New Excel file...')
+
+        # ZIP FOLDER
+        if zip_folder == None:
+            print('* No Zip folder found')
+        elif os.path.exists(os.path.join(UPLOAD_FOLDER, zip_folder)):
+            os.remove(os.path.join(UPLOAD_FOLDER, zip_folder))
+            print('* Zip folder found')
+            print('* Removing Zip folder...')
+
+        # PASSWORD FILE
+        if password_file == None:
+            print('* No Password file found')
+        elif os.path.exists(os.path.join(UPLOAD_FOLDER, password_file)):
+            os.remove(os.path.join(UPLOAD_FOLDER, password_file))
+            print('* Password file found')
+            print('* Removing Password file...')
 
 
 def run_file_check_on(file_name):
