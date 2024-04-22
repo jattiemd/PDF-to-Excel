@@ -1,7 +1,6 @@
 from flask import Flask, flash, render_template, request, redirect, send_file, after_this_request, session
 from bs4 import BeautifulSoup
 from win32com.client.gencache import EnsureDispatch
-from openpyxl import load_workbook
 from pathlib import PurePath
 import pythoncom
 import secrets, os, threading, tabula, zipfile, pandas as pd
