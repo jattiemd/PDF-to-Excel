@@ -41,16 +41,10 @@ This is a web application built with Flask that allows users to convert tables f
 git clone <repository_url>
 ```
 
-2. Install dependencies:
-
-```
-pip install -r requirements.txt
-```
-
-3. Run the Flask application:
+2. Run the Flask application:
 
 ```
 python app.py
 ```
 
-4. Access the application in your web browser at `http://localhost:5000`.
+3. Access the application in your web browser at `http://localhost:5000`.
