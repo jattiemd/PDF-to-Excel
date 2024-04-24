@@ -28,7 +28,10 @@ This is a web application built with Flask that allows users to convert tables f
 3. **Combine Tables** (Optional): Check the "Combine Tables" box if you want to merge multiple selected tables into a single Excel file.
 4. **Generate Excel**: Click the "Generate Excel" button to initiate the conversion process.
 5. **Download**: Once the conversion is complete, the download button will appear. Click it to download the converted Excel file.
-6. **Unlock file**: A zip file will be downloaded containing a .txt password file and an excel file. Copy and paste the password and the file will be unlocked for use.  
+6. **Unlock file**: A zip file will be downloaded containing a .txt password file and an excel file. Copy and paste the password and the file will be unlocked for use. 
+
+#### Additional
+- The code contains a variable named 'substrings_to_remove'. This variable has a list that allows you to exclude certain tables by name. Simply add the name of the sheet to the list and it will be excluded from the excel file. 
 
 ## Installation
 

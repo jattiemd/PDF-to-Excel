@@ -42,7 +42,7 @@ def index():
             
             # error handling: empty pdf file, no tables in pdf file
             if excel_file_path.endswith('None') or not os.path.exists(excel_file_path):
-                remove_files(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'))
+                remove_files(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), None, None)
                 session.clear()
                 flash('Error while converting! Either your pdf file has no tables or no file has been uploaded.')
                 flash('Please re-upload your file')
@@ -264,7 +264,6 @@ def do_conversion(file):
         print('* Conversion Successful!')
         print(f"* File '{session["EXCEL_FILE_NAME"]}' contents displayed successfully!")
         flash('Conversion completed!')
-        flash(f'Tables found: {len(tables)}')
         flash("Use the check boxes to select the tables that you want to generate for your Excel file. Then click 'Generate Excel' at the bottom of the page ")
     else:
         print('* Tables exist: False')
