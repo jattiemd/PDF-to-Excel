@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var combineTablesCheckbox = document.getElementById('combineTables');
   var combineTablesLabel = document.getElementById('combineTablesLabel');
   var operationsLabel = document.getElementById("operationsLabel");
+  var encryptWorkbook = document.getElementById("encryptWorkbook");
+  var encryptWorkbookLabel = document.getElementById("encryptWorkbookLabel");
+  var encryptSheets = document.getElementById("encryptSheets");
+  var encryptSheetsLabel = document.getElementById("encryptSheetsLabel"); 
 
   // Check if there are visible Tablecheckbox checkboxes
   var anyVisible = Array.from(tableCheckboxes).some(function(checkbox) {
@@ -63,6 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
   combineTablesCheckbox.style.display = anyVisible ? 'initial' : 'none';
   combineTablesLabel.style.display = anyVisible ? 'initial' : 'none';
   operationsLabel.style.display = anyVisible ? 'initial' : 'none';
+  encryptWorkbook.style.display = anyVisible ? 'initial' : 'none';
+  encryptWorkbookLabel.style.display = anyVisible ? 'initial' : 'none';
+  encryptSheets.style.display = anyVisible ? 'initial' : 'none';
+  encryptSheetsLabel.style.display = anyVisible ? 'initial' : 'none';
 });
 
 
