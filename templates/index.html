@@ -93,7 +93,7 @@
             <label class="form-check-label" for="tableCheckboxAll" id="tableCheckboxAllLabel" style="display: none">Select All Tables</label>
           </div>
           <div class="col text-end">
-            <input class="form-check-input " type="checkbox" id="combineTables" name="combineTables" style="display: none" {% if checkbox_value %} checked {% endif %}> 
+            <input class="form-check-input " type="checkbox" id="combineTables" name="combineTables" style="display: none" {% if combine_tables %} checked {% endif %}> 
           </div>
           <div class="col text-start">
             <label class="form-check-label" for="combineTables" id="combineTablesLabel" style="display: none">Combine Tables</label>
@@ -101,7 +101,7 @@
         </div>  
         <div class="row">
           <div class="col text-end">
-            <input class="form-check-input" type="checkbox" id="encryptWorkbook" name="encryptWorkbook" style="display: none">
+            <input class="form-check-input" type="checkbox" id="encryptWorkbook" name="encryptWorkbook" style="display: none" {% if encrypt_workbook %} checked {% endif %}>
           </div>
           <div class="col text-start">
             <label class="form-check-label" for="encryptWorkbook" id="encryptWorkbookLabel" name="encryptWorkbookLabel" style="display: none">Encrypt Workbook</label>
