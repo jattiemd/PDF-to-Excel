@@ -26,8 +26,15 @@
 <body style="background-color: rgb(255, 255, 255)" style="font-family:Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif">
   
   <div class="container shadow-lg p-3 mt-5 mb-5 bg-body-tertiary rounded">
-    <div class="container">
-      <h1 class="display-2 text-center">PDF Excelify</h1>
+    <div class="container d-flex justify-content-center align-items-center">
+      <div class="row custom-header-background">
+        <div class="col text-end">
+          <h1 class="display-2" style="color: black;">PDF</h1>
+        </div>
+        <div class="col text-start">
+          <h1 class="display-2" style="color: white;">Excelify</h1>
+        </div>
+      </div>
     </div>
     <hr>
 
@@ -78,16 +85,34 @@
         <div class="row mb-2">
           <h1 class="display-4 text-center" id="operationsLabel" style="display: none">Operations</h1>
         </div>
-        <div class="row align-items-center">
-          <div class="col">
+        <div class="row">
+          <div class="col text-end">
             <input class="form-check-input" type="checkbox" id="tableCheckboxAll" style="display: none" onclick="checkUnchecked(this)">
+          </div>
+          <div class="col text-start">
             <label class="form-check-label" for="tableCheckboxAll" id="tableCheckboxAllLabel" style="display: none">Select All Tables</label>
           </div>
-          <div class="col">
+          <div class="col text-end">
             <input class="form-check-input " type="checkbox" id="combineTables" name="combineTables" style="display: none" {% if checkbox_value %} checked {% endif %}> 
+          </div>
+          <div class="col text-start">
             <label class="form-check-label" for="combineTables" id="combineTablesLabel" style="display: none">Combine Tables</label>
           </div>
         </div>  
+        <div class="row">
+          <div class="col text-end">
+            <input class="form-check-input" type="checkbox" id="encryptWorkbook" name="encryptWorkbook" style="display: none">
+          </div>
+          <div class="col text-start">
+            <label class="form-check-label" for="encryptWorkbook" id="encryptWorkbookLabel" name="encryptWorkbookLabel" style="display: none">Encrypt Workbook</label>
+          </div>
+          <div class="col text-end">
+            <input class="form-check-input" type="checkbox" id="encryptSheets" name="encryptSheets" style="display: none">
+          </div>
+          <div class="col text-start">
+            <label class="form-check-label" for="encryptySheets" id="encryptSheetsLabel" name="encryptSheetsLabel" style="display: none">Encrypt Sheets</label>
+          </div>
+        </div>
       </div>
       <hr>
 
