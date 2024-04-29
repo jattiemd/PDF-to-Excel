@@ -169,7 +169,8 @@ def index():
                 
                 dir_path = os.getcwd()
                 with lock:
-                    password_protect_excel(str(PurePath(dir_path, f"{UPLOAD_FOLDER}{session.get('NEW_EXCEL_FILE_NAME')}")), password)
+                    protect_this_file =  str(PurePath(dir_path, f"{UPLOAD_FOLDER}{session.get('NEW_EXCEL_FILE_NAME')}"))
+                    password_protect_excel(protect_this_file, password)
 
                 excel_data.close()
                 print(f'* {len(selected_sheets)} sheets successfully generated!')
