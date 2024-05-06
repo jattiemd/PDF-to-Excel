@@ -115,13 +115,15 @@ def remove_files(pdf_file_name, excel_file_name, new_excel_file_name, zip_folder
 
 
 def run_file_check_on(file_name):
-    """Check if a file already exists"""
+    """Check if a file already exists. Remove if it if does"""
+
     if file_name is not None:
         os.remove(os.path.join(UPLOAD_FOLDER, file_name))
 
 
 def password_protect_excel(file_dir_path, password):
-    """Password protect file"""
+    """Password protect entire excel workbook"""
+    
     pythoncom.CoInitialize()
     xl_file = EnsureDispatch("Excel.Application")
     wb = xl_file.Workbooks.Open(file_dir_path)
@@ -132,3 +134,8 @@ def password_protect_excel(file_dir_path, password):
     xl_file.Quit()
     print("* File protected successfully")
     pythoncom.CoUninitialize()
+
+
+def password_protect_sheets(file_dir_path):
+    """Passsword protect excel worksheets only"""
+    pass
