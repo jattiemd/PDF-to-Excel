@@ -107,7 +107,7 @@
             <label class="form-check-label" for="encryptWorkbook" id="encryptWorkbookLabel" name="encryptWorkbookLabel" style="display: none">Encrypt Workbook</label>
           </div>
           <div class="col text-end">
-            <input class="form-check-input" type="checkbox" id="encryptSheets" name="encryptSheets" style="display: none">
+            <input class="form-check-input" type="checkbox" id="encryptSheets" name="encryptSheets" style="display: none" {% if encrypt_worksheets %} checked {% endif %}>
           </div>
           <div class="col text-start">
             <label class="form-check-label" for="encryptySheets" id="encryptSheetsLabel" name="encryptSheetsLabel" style="display: none">Encrypt Sheets</label>

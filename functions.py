@@ -1,10 +1,11 @@
 import os
 import threading
-from flask import flash, redirect, request, session
 import pandas as pd
 import tabula
 import pythoncom
+from flask import flash, redirect, request, session
 from win32com.client.gencache import EnsureDispatch
+from openpyxl import load_workbook
 
 
 UPLOAD_FOLDER = 'file_handler\\'
@@ -136,6 +137,13 @@ def password_protect_excel(file_dir_path, password):
     pythoncom.CoUninitialize()
 
 
-def password_protect_sheets(file_dir_path):
+def password_protect_sheets(file_dir_path, password):
     """Passsword protect excel worksheets only"""
-    pass
+
+    wb = load_workbook(filename=file_dir_path)
+    sheets = wb.sheetnames
+    for sheet in sheets:
+        wb[sheet].protection.set_password(password)
+    wb.save(file_dir_path)
+    print(f"* {len(wb.sheetnames)} sheet(s) protected successfully")
+    

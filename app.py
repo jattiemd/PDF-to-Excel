@@ -16,6 +16,7 @@ def index():
     html_tables = {}
     combine_tables = False
     encrypt_workbook = False
+    encrypt_worksheets = False
     global index_error
 
     if 'USER_IP' not in session:
@@ -113,6 +114,11 @@ def index():
                     encrypt_workbook = True
                 print(f"* Encrypt Workbook: {encrypt_workbook}")
 
+                # Check for Encrypt Worksheets checkbox
+                if 'encryptSheets' in request.form:
+                    encrypt_worksheets = True
+                print(f"* Encrypt Worksheets: {encrypt_worksheets}")
+
                 run_file_check_on(session.get('NEW_EXCEL_FILE_NAME', None))
                 session['NEW_EXCEL_FILE_NAME'] = 'custom_' + session.get('EXCEL_FILE_NAME')
                 session['NEW_EXCEL_FILE_NAME'] = session['NEW_EXCEL_FILE_NAME'].replace(" ", "_") 
@@ -171,19 +177,23 @@ def index():
                                 sheet_data.columns = [col if 'Unnamed' not in str(col) else '' for col in sheet_data.columns]
                                 sheet_data.to_excel(new_excel_data, sheet_name=sheet_name, index=False)
 
+                dir_path = os.getcwd()
+                protect_this_file =  str(PurePath(dir_path, f"{UPLOAD_FOLDER}{session.get('NEW_EXCEL_FILE_NAME')}"))
                 # If user wants to encrypt the Excel Workbook
                 if encrypt_workbook:
-                    dir_path = os.getcwd()
                     with lock:
-                        protect_this_file =  str(PurePath(dir_path, f"{UPLOAD_FOLDER}{session.get('NEW_EXCEL_FILE_NAME')}"))
                         password_protect_excel(protect_this_file, password)
+                # If user wants to encrypt the sheets within the excel workbook
+                if encrypt_worksheets:
+                    with lock:
+                        password_protect_sheets(protect_this_file, password)
 
                 excel_data.close()
                 print(f'* {len(selected_sheets)} sheets successfully generated!')
                 print('* Awaiting download request...')
                 generated_excel = os.path.join(UPLOAD_FOLDER, session.get("NEW_EXCEL_FILE_NAME"))
 
-                return render_template('index.html', html_tables=html_tables, generated_excel=generated_excel, combine_tables=combine_tables, encrypt_workbook=encrypt_workbook, index_error=index_error)
+                return render_template('index.html', html_tables=html_tables, generated_excel=generated_excel, combine_tables=combine_tables, encrypt_workbook=encrypt_workbook, encrypt_worksheets=encrypt_worksheets, index_error=index_error)
 
     return render_template('index.html', html_tables=html_tables)
 
