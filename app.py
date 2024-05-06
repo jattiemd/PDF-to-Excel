@@ -53,7 +53,7 @@ def index():
             # Looping through all sheets to create html tables
             for sheet_name in excel_data.sheet_names:
                 try:
-                    sheet_data = excel_data.parse(sheet_name, header=1)
+                    sheet_data = excel_data.parse(sheet_name, header=0)
                 except ValueError:
                     sheet_data = excel_data.parse(sheet_name)
 
@@ -138,7 +138,7 @@ def index():
                         print(f"* Combine tables: {combine_tables}")
                         combined_sheets = []
                         for sheet_name in selected_sheets:
-                            sheet_data = excel_data.parse(sheet_name, header=1)
+                            sheet_data = excel_data.parse(sheet_name, header=0)
 
                             # Check if sheet_data is a DataFrame and not empty
                             if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
@@ -164,7 +164,7 @@ def index():
                         # Writing individual sheets to Excel file without concatenation
                         print(f"* Combine tables: {combine_tables}")
                         for sheet_name in selected_sheets:
-                            sheet_data = excel_data.parse(sheet_name, header=1)
+                            sheet_data = excel_data.parse(sheet_name, header=0)
 
                             # Check if sheet_data is a DataFrame and not empty
                             if isinstance(sheet_data, pd.DataFrame) and not sheet_data.empty:
