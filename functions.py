@@ -43,12 +43,21 @@ def do_conversion(file):
 
     # Reading tables
     tables = tabula.read_pdf(pdf_file, pages='all', guess=False, stream=True)
-
+    
     # Writing tables to excel file
     if tables:        
         print('* Tables exist: True')
         excel_writer = pd.ExcelWriter(excel_file, engine='xlsxwriter')
         for i, table in enumerate(tables):
+            # Removing common recurring cells within tables
+            common_cells = ["C:", "Printed", "Page"]
+            for index, row in table.iterrows():
+                for column in table.columns:
+                    if isinstance(row[column], str):
+                        for common_cell in common_cells:
+                            if row[column].startswith(common_cell):
+                                table.at[index, column] = pd.NA
+
             table.to_excel(excel_writer, sheet_name=f'Sheet_{i+1}', index=False)
 
         excel_writer.close()

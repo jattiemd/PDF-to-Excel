@@ -41,11 +41,12 @@ def index():
             
             # error handling: empty pdf file, no tables in pdf file
             if excel_file_path.endswith('None') or not os.path.exists(excel_file_path):
-                remove_files(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), None, None)
-                session.clear()
-                flash('Error while converting! Either your pdf file has no tables or no file has been uploaded.')
-                flash('Please re-upload your file')
-                return redirect(request.url)    
+                with lock:
+                    threading.Timer(1.0, remove_files, args=(session.get('PDF_FILE_NAME'), session.get('EXCEL_FILE_NAME'), session.get('NEW_EXCEL_FILE_NAME'), session.get("ZIP_FOLDER"), session.get("PASSWORD_FILE"))).start()
+                    session.clear()
+                    flash('Error while converting! Either your pdf file has no tables or no file has been uploaded.')
+                    flash('Please re-upload your file')
+                    return redirect(request.url)    
             
             excel_data = pd.ExcelFile(excel_file_path)
             substrings_to_remove = [] # Remove and replace with table name(s) to exclude specific tables from table generation.
