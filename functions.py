@@ -42,7 +42,7 @@ def do_conversion(file):
     excel_file = extracted_file_path.replace('.pdf', '.xlsx')
 
     # Reading tables
-    tables = tabula.read_pdf(pdf_file, pages='all')
+    tables = tabula.read_pdf(pdf_file, pages='all', guess=False, stream=True)
 
     # Writing tables to excel file
     if tables:        
