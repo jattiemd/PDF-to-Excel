@@ -1,11 +1,15 @@
 import os
+import shutil
+import sys
 import threading
 import pandas as pd
 import tabula
 import pythoncom
+import win32com
 from flask import flash, redirect, request, session
 from win32com.client.gencache import EnsureDispatch
 from openpyxl import load_workbook
+from pathlib import Path
 
 
 UPLOAD_FOLDER = 'file_handler\\'
@@ -158,6 +162,18 @@ def password_protect_excel(file_dir_path, password):
         xl_file.Quit()
         print("* File protected successfully")
         pythoncom.CoUninitialize()
+    except AttributeError as error:
+        if error.name == "CLSIDToClassMap":
+            mod_name = error.obj.__name__
+            mod_name_parts = mod_name.split(".")
+            if len(mod_name_parts) == 3:
+                # Deleting the problematic module cache folder
+                folder_name = mod_name_parts[2]
+                gen_path = Path(win32com.__gen_path__)
+                folder_path = gen_path.joinpath(folder_name)
+                shutil.rmtree(folder_path)
+                # Deleting the refernece to the module to force a rebuild by gencache
+                del sys.modules[mod_name]
     finally:
         lock.release()
 
